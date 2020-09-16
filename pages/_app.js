@@ -1,7 +1,11 @@
-import '../styles/globals.css'
+import App from 'next/app'
 
-function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />
-}
+import 'antd/dist/antd.css'
 
-export default MyApp
+import '../static/styles/pages/comm.css';
+
+// function MyApp({ Component, pageProps }) {
+//   return <Component {...pageProps} />
+// }
+
+export default App
