@@ -11,43 +11,54 @@ import MarkNav from 'markdown-navbar';
 import 'markdown-navbar/dist/navbar.css';
 import '../static/styles/pages/comm.css';
 import {CalendarOutlined,FolderOutlined,FireOutlined} from '@ant-design/icons';
+import axios from 'axios';
+import marked from 'marked';
+import hljs from "highlight.js";
+import 'highlight.js/styles/monokai-sublime.css';
+import Tocify from '../components/tocify.tsx';
+import  servicePath  from '../config/apiUrl';
 
-export default function detailed () {
-    let markdown='# p01:React用于构建用户界面的 JavaScript 库\n' +
-  '[ **M** ] arkdown + E [ **ditor** ] = **Mditor**  \n' +
-  '> Mditor 是一个简洁、易于集成、方便扩展、期望舒服的编写 markdown 的编辑器，仅此而已... \n\n' +
-   '**这是加粗的文字**\n\n' +
-  '*这是倾斜的文字*`\n\n' +
-  '***这是斜体加粗的文字***\n\n' +
-  '~~这是加删除线的文字~~ \n\n'+
-  '\`console.log(111)\` \n\n'+
-  '# p02:React用于构建用户界面的 JavaScript 库\n' +
-  '> aaaaaaaaa\n' +
-  '>> bbbbbbbbb\n' +
-  '>>> cccccccccc\n'+
-  '***\n\n\n' +
-  '# p03:React用于构建用户界面的 JavaScript 库\n' +
-  '> aaaaaaaaa\n' +
-  '>> bbbbbbbbb\n' +
-  '>>> cccccccccc\n\n'+
-  '# p04:React用于构建用户界面的 JavaScript 库\n' +
-  '> aaaaaaaaa\n' +
-  '>> bbbbbbbbb\n' +
-  '>>> cccccccccc\n\n'+
-  '# p05:React用于构建用户界面的 JavaScript 库\n' +
-  '> aaaaaaaaa\n' +
-  '>> bbbbbbbbb\n' +
-  '>>> cccccccccc\n\n'+
-  '# p06:React用于构建用户界面的 JavaScript 库\n' +
-  '> aaaaaaaaa\n' +
-  '>> bbbbbbbbb\n' +
-  '>>> cccccccccc\n\n'+
-  '# p07:React用于构建用户界面的 JavaScript 库\n' +
-  '> aaaaaaaaa\n' +
-  '>> bbbbbbbbb\n' +
-  '>>> cccccccccc\n\n'+
-  '``` var a=11; ```'
-    
+
+detailed.getInitialProps = async(context)=>{
+
+    console.log(context.query.id)
+    let id =context.query.id
+    const promise = new Promise((resolve)=>{
+  
+      axios(servicePath.getArticleById+id).then(
+        (res)=>{
+          resolve(res.data.data[0])
+        }
+      )
+    })
+  
+    return await promise
+  }
+
+export default function detailed (article) {
+    const renderer = new marked.Renderer();
+
+    marked.setOptions({
+        renderer: renderer, 
+        gfm: true,
+        pedantic: false,
+        sanitize: false,
+        tables: true,
+        breaks: false,
+        smartLists: true,
+        smartypants: false,
+        highlight: function (code) {
+                return hljs.highlightAuto(code).value;
+        }
+    }); 
+
+    let html = marked(article.article_content) 
+
+    const tocify = new Tocify()
+    renderer.heading = function(text, level, raw) {
+        const anchor = tocify.add(text, level);
+      return `<a id="${anchor}" href="#${anchor}" class="anchor-fix"><h${level}>${text}</h${level}></a>\n`;
+    };
         return (
             <>
             <Head>
@@ -67,20 +78,23 @@ export default function detailed () {
 
                     <div>
                         <div className="detailed-title">
-                        detailed demo
+                        {article.title}
                         </div>
 
                         <div className="list-icon center">
-                            <span><CalendarOutlined  /> 2019-06-28</span>
+                            <span><CalendarOutlined  /> {article.addTime}</span>
                             <span><FolderOutlined /> detail content</span>
-                            <span><FireOutlined /> 5498人</span>
+                            <span><FireOutlined /> {article.view_count}人</span>
                         </div>
 
-                        <div className="detailed-content" >
-                            <ReactMarkdown 
+                        <div className="detailed-content" 
+                            dangerouslySetInnerHTML={{__html:html}}
+                        >
+                            {/* <ReactMarkdown 
                                 source={markdown} 
                                 escapeHtml={false}  
-                            />
+                            /> */}
+                            
                         </div>
 
                     </div>
@@ -93,11 +107,9 @@ export default function detailed () {
                     <Affix offsetTop={5}>
                         <div className="detailed-nav comm-box">
                             <div className="nav-title">文章目录</div>
-                            <MarkNav
-                                className="article-menu"
-                                source={markdown}
-                                ordered={false}
-                            />
+                            <div className="toc-list">
+                                {tocify && tocify.render()}
+                            </div>
                         </div>
                     </Affix>
                     

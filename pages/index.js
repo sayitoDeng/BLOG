@@ -1,5 +1,5 @@
 import Head from 'next/head'
-
+import Link from 'next/link';
 import {Row, Col,List} from 'antd'
 import 'antd/dist/antd.css';
 import '../static/styles/pages/index.css'
@@ -9,24 +9,45 @@ import {CalendarOutlined,FolderOutlined,FireOutlined} from '@ant-design/icons';
 import Author from '../components/author.js';
 import Footer from '../components/footer.js';
 import dynamic from 'next/dynamic'
-//import LiveKanna from '../components/live2d.js';
-//import ReactLive2d from 'react-live2d';
+import axios from 'axios';
+import  servicePath  from '../config/apiUrl'
+import marked from 'marked'
+import hljs from "highlight.js";
+import 'highlight.js/styles/monokai-sublime.css';
 
-// const DynamicComponentWithNoSSR = dynamic(import('../components/header'), {
-//   ssr: false
-// })
+Home.getInitialProps = async()=>{
+  const promise = new Promise((resolve)=>{
+    axios(servicePath.getArticleList).then(
+      (res)=>{
+        console.log('远程获取数据结果:',res.data.data)
+        resolve(res.data)
+      }
+    )
+  })
 
-// const ReactLive2d = dynamic(import('react-live2d'))
+  return await promise
+}
+export default function Home(list) {
+  //console.log(list)
+  const [mylist,setMylist] = useState(list.data)
+  const renderer = new marked.Renderer();
+  marked.setOptions({
+    renderer: renderer,
+    gfm: true,
+    pedantic: false,
+    sanitize: false,
+    tables: true,
+    breaks: false,
+    smartLists: true,
+    smartypants: false,
+    sanitize:false,
+    xhtml: false,
+    highlight: function (code) {
+            return hljs.highlightAuto(code).value;
+    }
 
-export default function Home() {
-  const [mylist,setMylist] = useState([
-    {title:'React用于构建用户界面的 JavaScript 库',context:'React 使创建交互式 UI 变得轻而易举。为你应用的每一个状态设计简洁的视图，当数据改变时 React 能有效地更新并正确地渲染组件。以声明式编写 UI，可以让你的代码更加可靠，且方便调试。创建拥有各自状态的组件，再由这些组件构成更加复杂的 UI。组件逻辑使用 JavaScript 编写而非模版，因此你可以轻松地在应用中传递数据，并使得状态与 DOM 分离。无论你现在正在使用什么技术栈，你都可以随时引入 React 来开发新特性，而不需要重写现有代码。React 还可以使用 Node 进行服务器渲染，或使用 React Native 开发原生移动应用。'},
-    {title:'React用于构建用户界面的 JavaScript 库',context:'React 使创建交互式 UI 变得轻而易举。为你应用的每一个状态设计简洁的视图，当数据改变时 React 能有效地更新并正确地渲染组件。以声明式编写 UI，可以让你的代码更加可靠，且方便调试。创建拥有各自状态的组件，再由这些组件构成更加复杂的 UI。组件逻辑使用 JavaScript 编写而非模版，因此你可以轻松地在应用中传递数据，并使得状态与 DOM 分离。无论你现在正在使用什么技术栈，你都可以随时引入 React 来开发新特性，而不需要重写现有代码。React 还可以使用 Node 进行服务器渲染，或使用 React Native 开发原生移动应用。'},
-    {title:'React用于构建用户界面的 JavaScript 库',context:'React 使创建交互式 UI 变得轻而易举。为你应用的每一个状态设计简洁的视图，当数据改变时 React 能有效地更新并正确地渲染组件。以声明式编写 UI，可以让你的代码更加可靠，且方便调试。创建拥有各自状态的组件，再由这些组件构成更加复杂的 UI。组件逻辑使用 JavaScript 编写而非模版，因此你可以轻松地在应用中传递数据，并使得状态与 DOM 分离。无论你现在正在使用什么技术栈，你都可以随时引入 React 来开发新特性，而不需要重写现有代码。React 还可以使用 Node 进行服务器渲染，或使用 React Native 开发原生移动应用。'},
-    {title:'React用于构建用户界面的 JavaScript 库',context:'React 使创建交互式 UI 变得轻而易举。为你应用的每一个状态设计简洁的视图，当数据改变时 React 能有效地更新并正确地渲染组件。以声明式编写 UI，可以让你的代码更加可靠，且方便调试。创建拥有各自状态的组件，再由这些组件构成更加复杂的 UI。组件逻辑使用 JavaScript 编写而非模版，因此你可以轻松地在应用中传递数据，并使得状态与 DOM 分离。无论你现在正在使用什么技术栈，你都可以随时引入 React 来开发新特性，而不需要重写现有代码。React 还可以使用 Node 进行服务器渲染，或使用 React Native 开发原生移动应用。'},
-    {title:'React用于构建用户界面的 JavaScript 库',context:'React 使创建交互式 UI 变得轻而易举。为你应用的每一个状态设计简洁的视图，当数据改变时 React 能有效地更新并正确地渲染组件。以声明式编写 UI，可以让你的代码更加可靠，且方便调试。创建拥有各自状态的组件，再由这些组件构成更加复杂的 UI。组件逻辑使用 JavaScript 编写而非模版，因此你可以轻松地在应用中传递数据，并使得状态与 DOM 分离。无论你现在正在使用什么技术栈，你都可以随时引入 React 来开发新特性，而不需要重写现有代码。React 还可以使用 Node 进行服务器渲染，或使用 React Native 开发原生移动应用。'},
-   
-  ])
+  }); 
+  
   return (
     <>
        <Head>
@@ -43,12 +64,18 @@ export default function Home() {
             dataSource={mylist}
             renderItem={item=>(
               <List.Item>
-                <div className="list-title">{item.title}</div>
-                <div className="list-icon">
-                  <span><CalendarOutlined />2020-09-16</span>
-                  <span><FireOutlined />999人</span>
+                <div className="list-title">
+                <Link href={{pathname:'/detailed',query:{id:item.id}}}>
+                  <a>{item.title}</a>
+                </Link>
                 </div>
-                <div className="list-context">{item.context}</div> 
+                <div className="list-icon">
+                  <span><CalendarOutlined />{item.addTime}</span>
+                  <span><FireOutlined />{item.view_count}人</span>
+                </div>
+                <div className="list-context"
+                  dangerouslySetInnerHTML={{__html:marked(item.introduce)}}
+                ></div> 
               </List.Item>
             )}
           />
