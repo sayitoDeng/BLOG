@@ -1,11 +1,37 @@
-.header{
+.header {
+    width: 100%;
     background-color: #fff;
-
-    padding: .4rem;
-    overflow: hidden;
-    height: 3.2rem;
-    border-bottom:1px solid #ccc;
-}
+    box-shadow: 0 1px 4px rgba(89, 90, 89, 0.28);
+    position: fixed;
+    top: 46px;
+    z-index: 1000;
+    color: #333;
+    transition: all 0.3s;
+    transform: translateY(-46px);
+  }
+  .ant-menu-horizontal{
+      border: none;
+  }
+  .scrollActive .ant-menu-item-active{
+    border: none !important;
+    background-color: #40a9ff !important;
+    color: #fff !important;
+    }
+  .ant-menu-item-active{
+      border: none !important;
+      background-color: grey !important;
+      color: #fff !important;
+  }
+  
+  .ant-menu-item{
+    border: none !important;   
+    margin: 0 !important;
+    width: 94px !important;
+    height: 46px !important;
+    justify-content: center !important;
+    text-align: center !important;
+    transition: all 0.3s !important;
+  }
 .header-logo{
     color:#1e90ff;
     font-size: 1.4rem;
@@ -27,4 +53,25 @@
     padding-left:1rem;
     padding-right:1rem;
 
+}
+.live2d-wapper{
+    position:fixed;
+    bottom: 0;
+    left: 0;
+}
+.scrollActive {
+    background-color: rgba(255, 255, 255, 1) !important;
+    color: #333 !important;
+}
+.homeHeader {
+    background-color: rgba(0, 0, 0, .7);
+    color: #fff;
+}
+.scrollActive .ant-menu {
+    background-color: rgba(255, 255, 255, 0) !important;
+    color: #333 !important;
+}
+.homeHeader .ant-menu {
+    background-color: rgba(0, 0, 0, 0);
+    color: #fff;
 }

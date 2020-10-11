@@ -1,6 +1,6 @@
 import React,{useState} from 'react';
 import Head from 'next/head';
-import {Row, Col  ,Breadcrumb,Affix  } from 'antd';
+import {Row, Col  ,Breadcrumb,Affix,BackTop   } from 'antd';
 
 import Header from '../components/Header';
 import Author from '../components/Author';
@@ -21,7 +21,6 @@ import  servicePath  from '../config/apiUrl';
 
 detailed.getInitialProps = async(context)=>{
 
-    console.log(context.query.id)
     let id =context.query.id
     const promise = new Promise((resolve)=>{
   
@@ -37,7 +36,16 @@ detailed.getInitialProps = async(context)=>{
 
 export default function detailed (article) {
     const renderer = new marked.Renderer();
-
+    const style = {
+        height: 40,
+        width: 40,
+        lineHeight: '40px',
+        borderRadius: 4,
+        backgroundColor: '#1088e9',
+        color: '#fff',
+        textAlign: 'center',
+        fontSize: 24,
+      };
     marked.setOptions({
         renderer: renderer, 
         gfm: true,
@@ -51,14 +59,16 @@ export default function detailed (article) {
                 return hljs.highlightAuto(code).value;
         }
     }); 
-
-    let html = marked(article.article_content) 
+    hljs.configure({ useBR: true });
+    
 
     const tocify = new Tocify()
+    
     renderer.heading = function(text, level, raw) {
         const anchor = tocify.add(text, level);
       return `<a id="${anchor}" href="#${anchor}" class="anchor-fix"><h${level}>${text}</h${level}></a>\n`;
     };
+    let html = marked(article.article_content) 
         return (
             <>
             <Head>
@@ -70,9 +80,9 @@ export default function detailed (article) {
                 <div>
                     <div className="bread-div">
                         <Breadcrumb>
-                        <Breadcrumb.Item><a href="/">首页</a></Breadcrumb.Item>
+                        {/* <Breadcrumb.Item><a href="/">首页</a></Breadcrumb.Item>
                         <Breadcrumb.Item>视频列表</Breadcrumb.Item>
-                        <Breadcrumb.Item>xxxx</Breadcrumb.Item>
+                        <Breadcrumb.Item>xxxx</Breadcrumb.Item> */}
                         </Breadcrumb>
                     </div>
 
@@ -104,7 +114,7 @@ export default function detailed (article) {
 
                 <Col className="comm-right" xs={0} sm={0} md={7} lg={5} xl={4}>
                     <Author />
-                    <Affix offsetTop={5}>
+                    <Affix offsetTop={52}>
                         <div className="detailed-nav comm-box">
                             <div className="nav-title">文章目录</div>
                             <div className="toc-list">
@@ -115,6 +125,9 @@ export default function detailed (article) {
                     
                 </Col>
             </Row>
+            <BackTop>
+                <div  style={style}>↑</div>
+            </BackTop>
             <Footer/>
         </>
         )

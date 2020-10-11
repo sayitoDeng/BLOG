@@ -15,11 +15,12 @@ import marked from 'marked'
 import hljs from "highlight.js";
 import 'highlight.js/styles/monokai-sublime.css';
 
+const LazyImg = dynamic(import('../components/LazyImg'))
+
 Home.getInitialProps = async()=>{
   const promise = new Promise((resolve)=>{
     axios(servicePath.getArticleList).then(
       (res)=>{
-        console.log('远程获取数据结果:',res.data.data)
         resolve(res.data)
       }
     )
@@ -55,8 +56,16 @@ export default function Home(list) {
        </Head> 
       <Header/>
       
-      
-      <Row className="comm-main" type="flex" justify="center">
+      <Row className="header-banner-box">
+          <Col xs={0} sm={0} md={24}>
+            <div className="header-banner">
+              <LazyImg background={true} params="?imageslim" src='../static/images/banner.png' >
+                
+              </LazyImg>
+            </div>
+          </Col>
+        </Row>
+      <Row className="content-box" type="flex" justify="center">
         <Col className="comm-left" xs={24} sm={24} md={16} lg={18} xl={14}  >
           <List
             header={<div>最新日志</div>}
